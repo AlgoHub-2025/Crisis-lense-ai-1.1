@@ -1,0 +1,71 @@
+.confidence-meter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 8px 16px 8px 8px;
+}
+
+.meter-svg-wrapper {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+.meter-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.meter-progress {
+  transition: stroke-dashoffset 1s ease-in-out;
+}
+
+.meter-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.meter-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+}
+
+.meter-label {
+  display: flex;
+  flex-direction: column;
+}
+
+.meter-label strong {
+  font-size: 13px;
+  color: var(--text-primary, #fff);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.meter-label span {
+  font-size: 11px;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.6));
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Colors */
+.meter-green .meter-progress { stroke: #1D9E75; }
+.meter-green .meter-value { color: #1D9E75; }
+
+.meter-amber .meter-progress { stroke: #EF9F27; }
+.meter-amber .meter-value { color: #EF9F27; }
+
+.meter-red .meter-progress { stroke: #E24B4A; }
+.meter-red .meter-value { color: #E24B4A; }

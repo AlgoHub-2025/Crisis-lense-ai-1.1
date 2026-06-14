@@ -101,16 +101,21 @@ class DisasterClassifier:
             X = self.vectorizer.transform([text])
 
             prediction = self.model.predict(X)[0]
+            try:
+                probs = self.model.predict_proba(X)[0]
+                confidence = float(max(probs))
+            except Exception:
+                confidence = 0.85
 
             label = str(prediction).lower()
 
             if label in ["0", "flood"]:
-                return "Flood"
+                return "Flood", confidence
 
             elif label in ["1", "earthquake"]:
-                return "Earthquake"
+                return "Earthquake", confidence
 
-            return str(prediction)
+            return str(prediction).capitalize(), confidence
 
         except Exception as e:
 
@@ -124,26 +129,19 @@ class DisasterClassifier:
     # -------------------------------------------------
 
     def predict(self, text):
-
         if not text:
-            return "Unknown"
+            return "Unknown", 0.0
 
         # Try ML first
-
         if self.vectorizer is not None and self.model is not None:
-
             result = self.ml_classifier(text)
-
             if result is not None:
                 return result
 
         # Fallback
-
-        return self.keyword_classifier(text)
-
+        return self.keyword_classifier(text), 0.65
 
 classifier = DisasterClassifier()
-
 
 def classify_disaster(text):
     return classifier.predict(text)

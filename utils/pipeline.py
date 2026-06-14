@@ -7,7 +7,7 @@ from utils.severity_prediction import predict_severity
 
 
 def analyze_report(report):
-    disaster = classify_disaster(report)
+    disaster, confidence = classify_disaster(report)
     location = extract_location(report)
     severity = predict_severity(report)
     authenticity = detect_fake_news(report)
@@ -32,6 +32,7 @@ def analyze_report(report):
 
     return {
         "disaster": disaster,
+        "confidence": confidence,
         "location": location,
         "severity": severity,
         "authenticity": authenticity,

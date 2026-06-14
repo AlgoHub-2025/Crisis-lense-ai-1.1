@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ConfidenceMeter from './components/ConfidenceMeter';
 import { 
   AlertTriangle, 
   MapPin, 
@@ -44,31 +45,149 @@ L.Icon.Default.mergeOptions({
 
 // Coordinate dictionary for major Pakistani locations to prevent geocoding lag
 const REGIONAL_COORDINATES = {
-  "swat": [35.2227, 72.4258],
-  "quetta": [30.1798, 66.9750],
-  "karachi": [24.8607, 67.0011],
-  "lahore": [31.5204, 74.3587],
-  "islamabad": [33.6844, 73.0479],
-  "rawalpindi": [33.5651, 73.0169],
+  // ── KPK ──
   "peshawar": [34.0151, 71.5249],
+  "swat": [35.2227, 72.4258], "mingora": [35.2827, 72.3609],
+  "chitral": [35.8510, 71.7864],
+  "dir": [35.2024, 71.8744], "upper dir": [35.2024, 71.8744], "lower dir": [34.9226, 71.8744],
+  "mardan": [34.1989, 72.0397],
+  "mansehra": [34.3313, 73.1964], "balakot": [34.5495, 73.3541],
+  "abbottabad": [34.1688, 73.2215],
+  "kohistan": [35.2825, 73.2215], "dasu": [35.2920, 73.2270],
+  "dera ismail khan": [31.8626, 70.9019], "d.i. khan": [31.8626, 70.9019], "di khan": [31.8626, 70.9019],
+  "nowshera": [34.0153, 71.9747],
+  "charsadda": [34.1453, 71.7308],
+  "swabi": [34.1202, 72.4705],
+  "kohat": [33.5869, 71.4414],
+  "bannu": [32.9888, 70.6011],
+  "tank": [32.2173, 70.3833],
+  "shangla": [34.8700, 72.6000], "besham": [34.9282, 72.8761],
+  "buner": [34.3944, 72.6333],
+  "battagram": [34.6800, 73.0250],
+  "haripur": [33.9958, 72.9330],
+  "hangu": [33.5281, 71.0594],
+  "lakki marwat": [32.6077, 70.9068],
+  "karak": [33.1161, 71.0938],
+  "torghar": [34.6310, 72.9440],
+  "malakand": [34.5650, 71.9325],
+  "kalam": [35.4884, 72.5870], "bahrain": [35.2145, 72.5459],
+
+  // ── PUNJAB ──
+  "lahore": [31.5204, 74.3587],
+  "rawalpindi": [33.5651, 73.0169], "pindi": [33.5651, 73.0169],
   "multan": [30.1575, 71.5249],
   "faisalabad": [31.4504, 73.1350],
-  "hyderabad": [25.3960, 68.3772],
   "sialkot": [32.4972, 74.5361],
-  "chitral": [35.8510, 71.7864],
-  "gilgit": [35.9184, 74.3124],
-  "skardu": [35.2981, 75.6333],
-  "muzaffarabad": [34.3700, 73.4711],
-  "abbottabad": [34.1688, 73.2215],
-  "mardan": [34.1989, 72.0397],
-  "mansehra": [34.3313, 73.1964],
-  "kohistan": [35.2825, 73.2215],
-  "dera ismail khan": [31.8626, 70.9019],
+  "gujranwala": [32.1877, 74.1945],
+  "gujrat": [32.5742, 74.0789],
+  "sargodha": [32.0836, 72.6711],
+  "bahawalpur": [29.3956, 71.6836],
+  "rahim yar khan": [28.4202, 70.2952], "rahimyar khan": [28.4202, 70.2952],
+  "dg khan": [30.0489, 70.6455], "dera ghazi khan": [30.0489, 70.6455],
+  "muzaffargarh": [30.0708, 71.1940],
+  "rajanpur": [29.1044, 70.3301],
+  "jhang": [31.2681, 72.3181],
+  "toba tek singh": [30.9709, 72.4826],
+  "sahiwal": [30.6669, 73.1069],
+  "okara": [30.8138, 73.4534],
+  "kasur": [31.1167, 74.4500],
+  "sheikhupura": [31.7131, 73.9850],
+  "hafizabad": [32.0709, 73.6880],
+  "mandi bahauddin": [32.5860, 73.4914],
+  "jhelum": [32.9404, 73.7276],
+  "chakwal": [32.9305, 72.8561],
+  "attock": [33.7660, 72.3609],
+  "mianwali": [32.5853, 71.5436],
+  "khushab": [32.2983, 72.3531],
+  "bhakkar": [31.6302, 71.0654],
+  "layyah": [30.9693, 70.9428],
+  "vehari": [30.0444, 72.3481],
+  "lodhran": [29.5452, 71.6300],
+  "pakpattan": [30.3416, 73.3889],
+  "narowal": [32.1024, 74.8734],
+  "chiniot": [31.7167, 72.9836],
+  "nankana sahib": [31.4492, 73.7063],
+
+  // ── SINDH ──
+  "karachi": [24.8607, 67.0011],
+  "hyderabad": [25.3960, 68.3772],
+  "sukkur": [27.7244, 68.8228],
+  "larkana": [27.5570, 68.2142],
+  "nawabshah": [26.2442, 68.4100],
+  "mirpur khas": [25.5276, 69.0159],
   "thatta": [24.7475, 67.9235],
   "badin": [24.6560, 68.8370],
-  "sukkur": [27.7244, 68.8228],
   "jacobabad": [28.2758, 68.4412],
-  "gwadar": [25.1264, 62.3224]
+  "shikarpur": [27.9558, 68.6383],
+  "dadu": [26.7319, 67.7753],
+  "khairpur": [27.5295, 68.7592],
+  "sanghar": [26.0467, 68.9481],
+  "umerkot": [25.3614, 69.7361],
+  "tharparkar": [24.7400, 69.8170], "thar": [24.7400, 69.8170], "mithi": [24.7316, 69.7971],
+  "ghotki": [28.0000, 69.3152],
+  "kashmore": [28.4400, 69.5836],
+  "jamshoro": [25.4305, 68.2809],
+  "matiari": [25.7720, 68.4449],
+  "sujawal": [24.5558, 68.0889],
+
+  // ── BALOCHISTAN ──
+  "quetta": [30.1798, 66.9750],
+  "gwadar": [25.1264, 62.3224],
+  "turbat": [26.0020, 63.0486],
+  "khuzdar": [27.8006, 66.6173],
+  "lasbela": [25.8682, 66.5622],
+  "kalat": [29.0281, 66.5919],
+  "zhob": [31.3414, 69.4486],
+  "loralai": [30.3705, 68.5973],
+  "sibi": [29.5430, 67.8775],
+  "pishin": [30.5837, 67.0003],
+  "chagai": [29.3162, 64.7002],
+  "nushki": [29.5536, 66.0231],
+  "panjgur": [26.9653, 64.0945],
+  "awaran": [26.4575, 65.2317],
+  "dera bugti": [29.0362, 69.1583], "sui": [28.6655, 69.1758],
+  "nasirabad": [28.5179, 68.3597],
+  "jaffarabad": [28.3000, 68.1800],
+  "jhal magsi": [28.3000, 67.4833],
+  "mastung": [29.7896, 66.8454],
+  "ziarat": [30.3811, 67.7258],
+  "harnai": [30.1020, 67.9410],
+
+  // ── GILGIT-BALTISTAN ──
+  "gilgit": [35.9184, 74.3124],
+  "skardu": [35.2981, 75.6333],
+  "hunza": [36.3075, 74.6546], "karimabad": [36.3164, 74.6595],
+  "nagar": [36.1097, 74.5553],
+  "chilas": [35.4214, 74.0960],
+  "astore": [35.3667, 74.8558],
+  "ghizer": [36.1529, 73.6264],
+
+  // ── AJK ──
+  "muzaffarabad": [34.3700, 73.4711],
+  "mirpur": [33.1484, 73.7514],
+  "bagh": [33.9803, 73.7785],
+  "kotli": [33.5156, 73.9022],
+  "rawalakot": [33.8577, 73.7604],
+  "bhimber": [32.9740, 74.0750],
+  "neelum": [34.5933, 73.8992],
+  "hattian": [34.1658, 73.7422],
+
+  // ── ISLAMABAD ──
+  "islamabad": [33.6844, 73.0479],
+
+  // ── RIVERS & BARRAGES ──
+  "indus river": [27.5000, 68.5000], "indus": [27.5000, 68.5000],
+  "swat river": [34.7720, 72.3440],
+  "chenab": [31.5000, 72.5000], "chenab river": [31.5000, 72.5000],
+  "jhelum river": [33.0000, 73.5000],
+  "kabul river": [34.0000, 71.7000],
+  "ravi": [31.3000, 74.2000], "ravi river": [31.3000, 74.2000],
+  "sutlej": [30.6000, 73.0000], "sutlej river": [30.6000, 73.0000],
+  "tarbela": [34.0889, 72.6941], "tarbela dam": [34.0889, 72.6941],
+  "mangla": [33.1500, 73.6500], "mangla dam": [33.1500, 73.6500],
+  "sukkur barrage": [27.7050, 68.8450],
+  "taunsa": [30.5304, 70.8512], "taunsa barrage": [30.5304, 70.8512],
+  "guddu": [28.4200, 69.5800], "guddu barrage": [28.4200, 69.5800]
 };
 
 const DEFAULT_IMAGES = {
@@ -127,15 +246,40 @@ export default function App() {
   const [mapCoords, setMapCoords] = useState([33.6844, 73.0479]); // Islamabad default
   const [mapStyle, setMapStyle] = useState('m'); // 'm' roadmap, 's' satellite, 'p' terrain, 'y' hybrid (Google layer codes)
   const [mapViewMode, setMapViewMode] = useState('severity'); // 'severity' or 'aid'
+  const [showHistorical, setShowHistorical] = useState(false); // Toggle for historical disasters
+  const [showSafeZones, setShowSafeZones] = useState(true); // Toggle for safe zones
+
+  // --- Safe Zones (Camps, Shelters) ---
+  const SAFE_ZONES = [
+    { id: 'sz_1', name: "IBA Sukkur Safe Campus", type: "shelter", coords: [27.7268, 68.8143], desc: "Elevated campus ground serving as major relief camp." },
+    { id: 'sz_2', name: "Saidu Medical College", type: "hospital", coords: [35.7441, 72.3551], desc: "Emergency field hospital & safe zone in Swat." },
+    { id: 'sz_3', name: "Quetta Cantonment Park", type: "camp", coords: [30.1983, 67.0177], desc: "Military-secured earthquake relief camp." },
+    { id: 'sz_4', name: "Jinnah Stadium Relief Hub", type: "shelter", coords: [33.6844, 73.0479], desc: "Central relief distribution & safe shelter." }
+  ];
+
+  // --- Historical Incidents (2022 Floods, 2005 Earthquake) ---
+  const HISTORICAL_INCIDENTS = [
+    { id: 'hist_1', text: "2022 Pakistan Floods - Severe flooding submerged 1/3 of the country.", location: "Sindh", severity: "Critical", label: "Historical Flood", coords: [26.0467, 68.9481] },
+    { id: 'hist_2', text: "2022 Pakistan Floods - Flash floods destroyed infrastructure.", location: "Balochistan", severity: "Critical", label: "Historical Flood", coords: [27.8006, 66.6173] },
+    { id: 'hist_3', text: "2005 Kashmir Earthquake - 7.6 magnitude earthquake caused massive devastation.", location: "Muzaffarabad", severity: "High", label: "Historical Earthquake", coords: [34.3700, 73.4711] },
+    { id: 'hist_4', text: "2010 Pakistan Floods - Indus river basin massive overflow.", location: "Sukkur", severity: "High", label: "Historical Flood", coords: [27.7244, 68.8228] }
+  ];
 
   // --- List of active incidents mapped ---
+  const DEMO_INCIDENTS = [
+    { id: 1001, text: "Indus River breached embankments near Sukkur Barrage. 50,000 residents at risk.", location: "Sukkur", severity: "Critical", label: "Flood", coords: [27.7244, 68.8228], aidStatus: "pending", image: null },
+    { id: 1002, text: "Flash flooding in Mingora, Swat. Roads impassable. 15 houses damaged.", location: "Swat", severity: "High", label: "Flood", coords: [35.2227, 72.4258], aidStatus: "pending", image: null },
+    { id: 1003, text: "4.8 magnitude earthquake near Quetta cantonment. Cracked walls in old buildings.", location: "Quetta", severity: "Medium", label: "Earthquake", coords: [30.1798, 66.9750], aidStatus: "received", image: null },
+  ];
+
   const [mappedIncidents, setMappedIncidents] = useState(() => {
     try {
       const saved = localStorage.getItem('mappedIncidents');
-      return saved ? JSON.parse(saved) : [];
+      const parsed = saved ? JSON.parse(saved) : [];
+      return parsed.length > 0 ? parsed : DEMO_INCIDENTS;
     } catch (e) {
       console.error('Failed to load mappedIncidents from localStorage:', e);
-      return [];
+      return DEMO_INCIDENTS;
     }
   });
 
@@ -629,6 +773,7 @@ export default function App() {
               <>
                 {/* KPI METRIC CARDS */}
                 {role === 'citizen' && (
+                  <>
                   <div className="kpi-grid">
                     <div className="kpi-card blue">
                       <div className="kpi-meta">
@@ -663,6 +808,98 @@ export default function App() {
                       <div className="kpi-subtext">Regional weather warnings</div>
                     </div>
                   </div>
+
+                  {/* ═══ LIVE EMERGENCY ALERTS & PROTOCOLS PANEL ═══ */}
+                  <div className="glass-panel" style={{ borderLeft: '4px solid var(--red-critical)', animation: 'slideUp 0.3s ease-out' }}>
+                    <div className="section-header">
+                      <div className="section-header-icon red">🚨</div>
+                      <h2>Active Emergency Alerts & Safety Protocols</h2>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      {/* Alert 1 - Critical */}
+                      <div style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.25)', borderRadius: '8px', padding: '1rem 1.25rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                        <div style={{ background: 'rgba(239, 68, 68, 0.2)', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '1.1rem' }}>🔴</div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+                            <span style={{ fontWeight: 800, color: '#fca5a5', fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>🚨 CRITICAL — Sindh Flood Warning</span>
+                            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>2 hours ago</span>
+                          </div>
+                          <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: 1.6, margin: 0 }}>
+                            Indus River water level dangerously high near Sukkur Barrage. All residents in low-lying areas of Sukkur, Jacobabad, and Larkana must evacuate immediately to higher ground. NDMA has issued a Red Alert.
+                          </p>
+                          <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: '0.65rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: 'rgba(239, 68, 68, 0.15)', color: '#fca5a5', fontWeight: 700 }}>NDMA RED ALERT</span>
+                            <span style={{ fontSize: '0.65rem', padding: '0.2rem 0.5rem', borderRadius: '4px', background: 'rgba(59, 130, 246, 0.15)', color: '#93c5fd', fontWeight: 700 }}>PDMA Sindh Activated</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Alert 2 - High */}
+                      <div style={{ background: 'rgba(245, 158, 11, 0.06)', border: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: '8px', padding: '1rem 1.25rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                        <div style={{ background: 'rgba(245, 158, 11, 0.2)', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '1.1rem' }}>🟡</div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+                            <span style={{ fontWeight: 800, color: 'var(--amber-warning)', fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>⚠️ HIGH — Swat River Advisory</span>
+                            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>6 hours ago</span>
+                          </div>
+                          <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: 1.6, margin: 0 }}>
+                            Swat River water levels are rising due to continuous rainfall in Mingora and Bahrain. Residents within 2km of river banks should prepare for possible evacuation. Avoid travel on N95 highway.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Alert 3 - Earthquake */}
+                      <div style={{ background: 'rgba(245, 158, 11, 0.06)', border: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: '8px', padding: '1rem 1.25rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                        <div style={{ background: 'rgba(245, 158, 11, 0.2)', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '1.1rem' }}>🟠</div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.3rem' }}>
+                            <span style={{ fontWeight: 800, color: 'var(--amber-warning)', fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>🏔️ MEDIUM — Quetta Seismic Activity</span>
+                            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>12 hours ago</span>
+                          </div>
+                          <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: 1.6, margin: 0 }}>
+                            Moderate earthquake (4.8 magnitude) recorded near Quetta cantonment. Aftershocks expected. Avoid old brick structures. Keep emergency kits ready.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Emergency Protocol Box */}
+                    <div style={{ marginTop: '1.25rem', background: 'rgba(59, 130, 246, 0.06)', border: '1px solid rgba(59, 130, 246, 0.2)', borderRadius: '8px', padding: '1rem 1.25rem' }}>
+                      <h3 style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--blue-primary)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>📋 Emergency Safety Protocols</h3>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '0.75rem' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                          <span style={{ fontSize: '1rem', marginTop: '0.1rem' }}>🚁</span>
+                          <div>
+                            <strong style={{ color: 'var(--text-primary)', fontSize: '0.78rem' }}>Rescue Hotline</strong>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.72rem', margin: '0.1rem 0 0 0' }}>Call 1122 (Emergency) or 1166 (NDMA) for immediate rescue assistance.</p>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                          <span style={{ fontSize: '1rem', marginTop: '0.1rem' }}>🏥</span>
+                          <div>
+                            <strong style={{ color: 'var(--text-primary)', fontSize: '0.78rem' }}>Medical Emergency</strong>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.72rem', margin: '0.1rem 0 0 0' }}>Nearest field hospitals operational in Sukkur, Swat, and Quetta. Carry clean water and first aid.</p>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                          <span style={{ fontSize: '1rem', marginTop: '0.1rem' }}>🛡️</span>
+                          <div>
+                            <strong style={{ color: 'var(--text-primary)', fontSize: '0.78rem' }}>Evacuation Routes</strong>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.72rem', margin: '0.1rem 0 0 0' }}>Follow green route markers on the map. Avoid bridges and riverbank roads.</p>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                          <span style={{ fontSize: '1rem', marginTop: '0.1rem' }}>📡</span>
+                          <div>
+                            <strong style={{ color: 'var(--text-primary)', fontSize: '0.78rem' }}>Stay Informed</strong>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.72rem', margin: '0.1rem 0 0 0' }}>Monitor Pakistan Met Dept and NDMA official channels. Do not share unverified reports.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  </>
                 )}
 
                 {role === 'ngo' && (
@@ -740,6 +977,38 @@ export default function App() {
                       </div>
                       <div className="kpi-subtext">Active danger areas mapped</div>
                     </div>
+                  </div>
+                )}
+
+                {/* GOV ACTION: EMERGENCY BROADCAST BUTTON */}
+                {role === 'gov' && (
+                  <div style={{ marginTop: '1.5rem', marginBottom: '1.5rem', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '10px', padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <h3 style={{ margin: '0 0 0.5rem 0', color: 'var(--red-critical)', fontSize: '1.1rem', fontWeight: 800 }}>🚨 National Emergency Broadcast System</h3>
+                      <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Send immediate Twilio SMS alerts to all registered citizens in active Red Zones.</p>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        // Mock functionality for UI enhancement
+                        alert("✅ SUCCESS: Emergency SMS Broadcast initiated via Twilio!\n\nMessage: 'CRITICAL ALERT: Evacuate immediately. Follow 1122 protocols.'\nRecipients: 45,210 citizens in Sindh & Balochistan red zones.");
+                      }}
+                      style={{
+                        padding: '0.75rem 1.5rem',
+                        backgroundColor: 'var(--red-critical)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontSize: '0.9rem',
+                        fontWeight: 800,
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)',
+                        transition: 'transform 0.2s',
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                      onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    >
+                      Broadcast SMS to Citizens
+                    </button>
                   </div>
                 )}
 
@@ -919,23 +1188,66 @@ export default function App() {
                       </button>
                     </div>
                   </div>
+                  {/* Map Controls & Legend */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                    <div style={{ display: 'flex', gap: '1.25rem', padding: '0.5rem 0.75rem', backgroundColor: 'var(--bg-inner)', borderRadius: '6px', fontSize: '0.72rem', border: '1px solid var(--border-color)', flex: 1 }}>
+                      {mapViewMode === 'severity' ? (
+                        <>
+                          <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>Severity Key:</span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--red-critical)' }}></span> Danger / Critical (Red)</span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--amber-warning)' }}></span> Medium Disruption (Yellow)</span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--green-success)' }}></span> Normal / Low (Green)</span>
+                        </>
+                      ) : (
+                        <>
+                          <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>Aid Tracking Key:</span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#7f1d1d' }}></span> Pending Aid / No Aid (Dark Red)</span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2563eb' }}></span> Aid Successfully Received (Blue)</span>
+                        </>
+                      )}
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button 
+                        onClick={() => setShowSafeZones(!showSafeZones)}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          backgroundColor: showSafeZones ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-inner)',
+                          border: `1px solid ${showSafeZones ? 'var(--green-success)' : 'var(--border-color)'}`,
+                          color: showSafeZones ? 'var(--green-success)' : 'var(--text-secondary)',
+                          borderRadius: '6px',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <span>🛡️</span> {showSafeZones ? 'Hide Safe Zones' : 'Show Safe Zones'}
+                      </button>
 
-                  {/* Map Info Legend */}
-                  <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '0.75rem', padding: '0.5rem 0.75rem', backgroundColor: 'var(--bg-inner)', borderRadius: '6px', fontSize: '0.72rem', border: '1px solid var(--border-color)' }}>
-                    {mapViewMode === 'severity' ? (
-                      <>
-                        <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>Severity Key:</span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--red-critical)' }}></span> Danger / Critical (Red)</span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--amber-warning)' }}></span> Medium Disruption (Yellow)</span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--green-success)' }}></span> Normal / Low (Green)</span>
-                      </>
-                    ) : (
-                      <>
-                        <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>Aid Tracking Key:</span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#7f1d1d' }}></span> Pending Aid / No Aid (Dark Red)</span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2563eb' }}></span> Aid Successfully Received (Blue)</span>
-                      </>
-                    )}
+                      <button 
+                        onClick={() => setShowHistorical(!showHistorical)}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          backgroundColor: showHistorical ? 'rgba(59, 130, 246, 0.15)' : 'var(--bg-inner)',
+                          border: `1px solid ${showHistorical ? 'var(--blue-primary)' : 'var(--border-color)'}`,
+                          color: showHistorical ? 'var(--blue-primary)' : 'var(--text-secondary)',
+                          borderRadius: '6px',
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <span>📜</span> {showHistorical ? 'Hide Historical Context' : 'Show Historical Context'}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Leaflet Map loaded with Google Maps Layer */}
@@ -945,6 +1257,43 @@ export default function App() {
                         attribution='Map imagery &copy; Google Maps'
                         url={`https://mt1.google.com/vt/lyrs=${mapStyle}&x={x}&y={y}&z={z}`}
                       />
+
+                      {/* Render Safe Zones (if toggled) */}
+                      {showSafeZones && SAFE_ZONES.map(sz => (
+                        <Marker position={sz.coords} key={sz.id} icon={L.divIcon({
+                          className: 'custom-div-icon',
+                          html: `<div style='background-color:#10b981;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:white;font-size:14px;border:2px solid white;box-shadow:0 2px 5px rgba(0,0,0,0.3);'>🛡️</div>`,
+                          iconSize: [24, 24],
+                          iconAnchor: [12, 12]
+                        })}>
+                          <Popup>
+                            <div style={{ color: '#000', fontSize: '0.8rem', minWidth: '160px' }}>
+                              <h4 style={{ fontWeight: 800, borderBottom: '1px solid #ddd', paddingBottom: '0.2rem', marginBottom: '0.35rem', color: '#10b981' }}>
+                                🛡️ {sz.name}
+                              </h4>
+                              <p style={{ margin: '0.2rem 0' }}><strong>Type:</strong> {sz.type.toUpperCase()}</p>
+                              <p style={{ margin: '0.2rem 0' }}><strong>Details:</strong> {sz.desc}</p>
+                            </div>
+                          </Popup>
+                        </Marker>
+                      ))}
+
+                      {/* Render Historical Incidents (if toggled) */}
+                      {showHistorical && HISTORICAL_INCIDENTS.map(inc => (
+                        <Marker position={inc.coords} key={inc.id}>
+                          <Popup>
+                            <div style={{ color: '#000', fontSize: '0.8rem', minWidth: '160px' }}>
+                              <h4 style={{ fontWeight: 800, borderBottom: '1px solid #ddd', paddingBottom: '0.2rem', marginBottom: '0.35rem', color: '#6b7280' }}>
+                                📜 {inc.label}
+                              </h4>
+                              <p style={{ margin: '0.2rem 0' }}><strong>Location:</strong> {inc.location}</p>
+                              <p style={{ margin: '0.2rem 0' }}><strong>Impact:</strong> {inc.text}</p>
+                            </div>
+                          </Popup>
+                        </Marker>
+                      ))}
+
+                      {/* Render Active Incidents */}
                       {mappedIncidents.map(inc => (
                         <Marker position={inc.coords} key={inc.id}>
                           <Popup>

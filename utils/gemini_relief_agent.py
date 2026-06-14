@@ -8,7 +8,7 @@ API_KEY = "YOUR_GROQ_API_KEY"   # Replace with your actual Groq API key
 
 client = Groq(api_key=API_KEY)
 
-MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"   # Fast, powerful — best for structured analysis
+MODEL = "llama3-70b-8192"   # Powerful 70B model for authoritative analysis and Urdu output
 # Other options:
 # "llama-3.1-70b-versatile"         — slightly older but very stable
 # "mixtral-8x7b-32768"              — good for long context
@@ -122,17 +122,19 @@ Rank the top response priorities in order of urgency:
 Priority 1: [Most critical action]
 Priority 2: [Second most critical]
 Priority 3: [Third most critical]
-Priority 4: [Fourth if applicable]
-Priority 5: [Fifth if applicable]
 
 ----------------------------------------------------
-## 8. RECOVERY STRATEGY
+## 8. 72-HOUR OUTLOOK
 
-Recommend steps for:
-- Infrastructure restoration (roads, utilities, housing)
-- Community recovery (schools, livelihoods, psychosocial support)
-- Medical recovery (disease surveillance, long-term care)
-- Economic recovery (compensation, crop restoration, employment)
+Recommend steps for the next 72 hours:
+- Infrastructure monitoring
+- Disease surveillance
+- Additional resource requests
+
+----------------------------------------------------
+## 9. URDU CITIZEN ALERT
+
+Provide a highly concise, 3-sentence critical alert message written entirely in URDU (using Nastaliq script) meant for broadcasting via SMS or radio to affected citizens. It must include the core danger, exactly what to do, and emergency numbers.
 
 ====================================================
 # OUTPUT FORMAT
@@ -160,8 +162,11 @@ Use exactly these section headers with the emoji icons:
 🚁 RESCUE PRIORITIES
 [content]
 
-🔄 RECOVERY STRATEGY
+🔄 72-HOUR OUTLOOK
 [content]
+
+📡 URDU CITIZEN ALERT
+[content in urdu]
 
 ====================================================
 # RESPONSE RULES
@@ -252,7 +257,7 @@ def generate_relief_plan(
                     "content": prompt
                 }
             ],
-            temperature=0.2,       # Low = consistent, professional tone
+            temperature=0.3,       # Adjusted for consistency and structured output
             max_tokens=1500,
             top_p=0.9,
             stream=False
